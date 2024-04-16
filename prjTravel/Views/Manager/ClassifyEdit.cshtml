@@ -1,0 +1,31 @@
+﻿@model prjTravel.Models.Classify
+
+@{
+    ViewData["Title"] = "修改分類名稱";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<h4 class="fw-bold">修改分類名稱</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ClassifyEdit" class="needs-validation" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Cid" />
+            <div class="form-group">
+                <label asp-for="Cname" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <input id="Cname" asp-for="Cname" class="form-control" required/>
+                <span asp-validation-for="Cname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="修改" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

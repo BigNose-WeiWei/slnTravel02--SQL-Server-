@@ -1,0 +1,16 @@
+﻿@import "bootstrap/scss/bootstrap.scss";
+
+.was-validated .form-control:valid .is-invalid:valid,
+.input-validation-error {
+    border-color: $form-feedback-invalid-color !important;
+    background-image: escape-svg($form-feedback-icon-invalid) !important;
+    box-shadow: 0 0 $input-btn-focus-blur $input-focus-width rgba($form-feedback-invalid-color, $input-btn-focus-color-opacity) !important;
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+}
+
+/*.was-validated .form-select.is-invalid:valid{
+    background-image: escape-svg($form-select-indicator), escape-svg($form-feedback-icon-invalid) !important;
+}*/
+

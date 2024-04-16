@@ -1,0 +1,63 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _dbContext
+
+@model prjTravel.Models.Member
+
+@{
+    ViewData["Title"] = "新增成員";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    var roleItem = _dbContext.Roles.Where(m => m.Rid != "Admin");
+}
+
+<h4 class="fw-bold">新增會員</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="MemberCreate" class="needs-validation" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Muid" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <input asp-for="Muid" class="form-control" required/>
+                <span asp-validation-for="Muid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mpwd" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <input asp-for="Mpwd" class="form-control" required/>
+                <span asp-validation-for="Mpwd" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mname" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <input asp-for="Mname" class="form-control" required/>
+                <span asp-validation-for="Mname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mmail" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <input asp-for="Mmail" class="form-control" required/>
+                <span asp-validation-for="Mmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mrole" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <select asp-for="Mrole" class="form-select" required>
+                    @foreach(var item in roleItem)
+                    {
+                        <option value="@item.Rid">@item.Rname</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="新增" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

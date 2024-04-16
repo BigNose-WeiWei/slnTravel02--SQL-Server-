@@ -1,0 +1,112 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _dbContext
+
+@model prjTravel.Models.Member
+
+@{
+    ViewData["Title"] = "會員資料";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    var RoleItme = _dbContext.Roles.Where(m => m.Rid != "Admin" && m.Rid != "Manager");
+}
+
+<div class="container-fluid" style="margin-top: 70px;">
+    <h4 class="mt-3 fw-bold">@Model.Muid - 會員資料</h4>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="MemberEdit" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Muid" />
+                <div class="form-group">
+                    <label asp-for="Mpwd" class="control-label"></label>
+                    <span class="text-danger">*</span>
+                    <input id="Mpwd" asp-for="Mpwd" class="form-control" required/>
+                    <span asp-validation-for="Mpwd" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mname" class="control-label"></label>
+                    <span class="text-danger">*</span>
+                    <input id="Mname" asp-for="Mname" class="form-control" required/>
+                    <span asp-validation-for="Mname" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mmail" class="control-label"></label>
+                    <span class="text-danger">*</span>
+                    <input id="Mmail" asp-for="Mmail" class="form-control" required/>
+                    <span asp-validation-for="Mmail" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Mrole" class="control-label"></label>
+                    <span class="text-danger">*</span>
+                    <select asp-for="Mrole" class="form-select" required>
+                        @foreach (var item in RoleItme)
+                        {
+                            <option value="@item.Rid">@item.Rname</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input id="UploadButton" type="submit" value="儲存" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    // var Mpwd = document.getElementById('Mpwd');                     //密碼
+    // var Mname = document.getElementById('Mname');                   //名稱
+    // var Mmail = document.getElementById('Mmail');                   //郵件
+    // var UploadButton = document.getElementById('UploadButton');     //按鈕
+
+    // /*偵測密碼是否被輸入*/
+    // Mpwd = addEventListener('input', function () {
+    //     MpwdCheck();
+    // });
+
+    // function MpwdCheck() 
+    // {
+    //     //輸入框是否存在
+    //     if (Mpwd) {
+    //         if (Mpwd.value.trim() !== "") {
+    //             //輸入框有資料
+    //             Mpwd.classList.remove('is-invalid');
+    //             Mpwd.classList.add('is-valid');
+    //         }
+    //         else {
+    //             //輸入框沒有資料
+    //             Mpwd.classList.remove('is-valid');
+    //             Mpwd.classList.add('is-invalid');
+    //         }
+    //     }
+
+    // }
+
+    // /*偵測郵件是否被輸入*/
+    // Mmail = addEventListener('input', function () {
+    //     MmailCheck();
+    // });
+
+    // function MmailCheck() {
+    //     //輸入框是否存在
+    //     if (Mmail) {
+    //         if (Mmail.value.trim() !== "") {
+    //             //輸入框有資料
+    //             Mmail.classList.remove('is-invalid');
+    //             Mmail.classList.add('is-valid');
+    //         }
+    //         else {
+    //             //輸入框沒有資料
+    //             Mmail.classList.remove('is-valid');
+    //             Mmail.classList.add('is-invalid');
+    //         }
+    //     }
+
+    // }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

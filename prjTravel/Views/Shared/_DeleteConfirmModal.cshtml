@@ -1,0 +1,53 @@
+﻿<div class="modal fade" id="DeleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="ModalTatil"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p style="word-wrap: break-word;" id="ModalThing"></p>
+            </div>
+            <div class="modal-footer">
+                <a id="deleteButton" class="btn btn-danger">確定</a>
+                <a class="btn btn-secondary" data-bs-dismiss="modal">取消</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var Modal = document.getElementById('DeleteConfirmModal');
+    Modal.addEventListener('show.bs.modal', function (event) {
+
+        // Button that triggered the modal
+        var button = event.relatedTarget;
+        // 取得控制器
+        var Controller = button.getAttribute('data-bs-Controller');
+        // 取得方法
+        var Action = button.getAttribute('data-bs-Action');
+        // 取得方法的變數代號
+        var ActionID = button.getAttribute('data-bs-ActionID');
+        // 取得Key
+        var Key = button.getAttribute('data-bs-Key');
+        // Modal Title
+        var Title = button.getAttribute('data-bs-Title');
+        // Modal Thing
+        var Thing = button.getAttribute('data-bs-Thing');
+
+        //設定Modal文字
+        var modalTitle = Modal.querySelector('#ModalTatil');
+        var modalThing = Modal.querySelector('#ModalThing');
+        var deleteButton = Modal.querySelector('#deleteButton');
+
+        modalTitle.textContent = Title;
+        modalThing.textContent = Thing;
+
+        //呼叫Action方法
+        deleteButton.setAttribute('href', '@Url.Action("__Action__", new { __ActionID__ = "__Key__" })'
+            .replace('__Action__', Action)
+            .replace('__ActionID__', ActionID)
+            .replace('__Key__', Key));
+    });
+</script>
+

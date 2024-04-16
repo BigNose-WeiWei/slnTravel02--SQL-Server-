@@ -1,0 +1,211 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _dbcontext
+
+@model IEnumerable<prjTravel.Models.Folder>
+
+@{
+    ViewData["Title"] = ViewBag.Classify;
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var picturesDbcontext = _dbcontext.FolderPictures.ToList();
+}
+
+<style>
+    .card-text {
+        white-space: nowrap;
+    }
+</style>
+
+<div class="container-fluid">
+    <h4 class="fw-bold">@ViewBag.Classify</h4>
+    <hr />
+
+    <form asp-action="FolderClassifyIndex" method="get" class="col-12 col-sm-8 col-md-6 col-xl-4 col-xxl-4">
+    <div class="input-group">
+        <input type="text" class="form-control visually-hidden" name="Cid" value="@ViewData["ClassifyKey"]" />
+        <input type="text" class="form-control" name="SearchFolder" placeholder="請輸入主題名稱">
+        <span class="input-group-btn">
+            <button type="submit" class="btn btn-secondary">查詢</button>
+        </span>
+    </div>
+    </form>
+
+    <div class="container-fluid">
+        <div class="row mt-2">
+            @{
+                int index = 0;              //第幾筆資料
+                int pictureTitleNum = 0;    //標籤連結導引用
+                int pictureNum = 0;         //幻燈片用
+            }
+
+            @foreach (var item in Model)
+            {
+                index++;
+                var picturesItem = picturesDbcontext.Where(m => m.Pfid == item.Fpicture && m.PcontentClassify == "Title").OrderBy(m => m.Prow);  //取得圖片路徑
+
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-3 mt-3">
+                    <div class="card" style="width:100%">
+                        <!--圖片輪播-->
+                        <div id="carousellnk_@index" class="carousel slide" data-bs-ride="carousel">
+
+                            <!--連結導引-->
+                            <div class="carousel-indicators">
+                                @foreach (var pictures in picturesItem)
+                                {
+                                    pictureTitleNum = pictureNum + 1;
+                                    if (pictureNum == 0)
+                                    {
+                                        <button type="button" data-bs-target="#carousellnk_@index" data-bs-slide-to="@pictureNum" class="active" aria-current="true" aria-label="Slide @pictureTitleNum"></button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" data-bs-target="#carousellnk_@index" data-bs-slide-to="@pictureNum" aria-label="Slide @pictureTitleNum"></button>
+                                    }
+                                    pictureNum++;
+                                }
+                                @{
+                                    pictureNum = 0; //重製單筆資料預設值
+                                }
+                            </div>
+
+                            <!--幻燈片圖-->
+                            <div class="carousel-inner">
+                                @foreach (var pictures in picturesItem)
+                                {
+                                    if (pictureNum == 0)
+                                    {
+                                        <div class="carousel-item active" data-bs-interval="3000">
+                                            <img class="w-100" src="~/pictures/@item.Fcid/@pictures.Ppicture" style="height: 240px">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="carousel-item" data-bs-interval="3000">
+                                            <img class="w-100" src="~/pictures/@item.Fcid/@pictures.Ppicture" style="height: 240px">
+                                        </div>
+                                    }
+
+                                    pictureNum++;
+                                }
+
+                                @{
+                                    pictureNum = 0; //重製單筆資料預設值
+                                }
+                            </div>
+
+                            <!--上下導引-->
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carousellnk_@index" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carousellnk_@index" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">@item.Ftitle</h5>
+                            <p class="card-text text-secondary ">創建時間:<br />@item.FcreateTime</p>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#myModal_@index">
+                                詳細資料
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The Modal -->
+                <div class="modal fade" id="myModal_@index">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <!-- Modal Header-->
+                            <div class="modal-header">
+                                <h4 class="modal-title">@item.Ftitle</h4>
+                                <button type="button" class="btn btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                                <!--圖片輪播-->
+                                <div id="carousellnk_Modal_@index" class="carousel slide" data-bs-ride="carousel">
+
+                                    <!--連結導引-->
+                                    <div class="carousel-indicators">
+                                        @foreach (var pictures in picturesItem)
+                                        {
+                                            pictureTitleNum = pictureNum + 1;
+                                            if (pictureNum == 0)
+                                            {
+                                                <button type="button" data-bs-target="#carousellnk_Modal_@index" data-bs-slide-to="@pictureNum" class="active" aria-current="true" aria-label="Slide @pictureTitleNum"></button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" data-bs-target="#carousellnk_Modal_@index" data-bs-slide-to="@pictureNum" aria-label="Slide @pictureTitleNum"></button>
+                                            }
+                                            pictureNum++;
+                                        }
+                                        @{
+                                            pictureNum = 0; //重製單筆資料預設值
+                                        }
+                                    </div>
+
+                                    <!--幻燈片圖-->
+                                    <div class="carousel-inner">
+                                        @foreach (var pictures in picturesItem)
+                                        {
+                                            if (pictureNum == 0)
+                                            {
+                                                <div class="carousel-item active" data-bs-interval="3000">
+                                                    <img class="w-100" src="~/pictures/@item.Fcid/@pictures.Ppicture" style="height: 240px">
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="carousel-item" data-bs-interval="2500">
+                                                    <img class="w-100" src="~/pictures/@item.Fcid/@pictures.Ppicture" style="height: 240px">
+                                                </div>
+                                            }
+
+                                            pictureNum++;
+                                        }
+
+                                        @{
+                                            pictureNum = 0; //重製單筆資料預設值
+                                        }
+                                    </div>
+
+                                    <!--上下導引-->
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carousellnk_Modal_@index" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carousellnk_Modal_@index" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+
+                                </div>
+
+                                <p>@item.Fdescription</p>
+                                <p class="card-text text-secondary"></p>
+                                <p class="card-text text-secondary">創件者: @item.FcreateUser <br /> 創建時間: @item.FcreateTime</p>
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">關閉</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+

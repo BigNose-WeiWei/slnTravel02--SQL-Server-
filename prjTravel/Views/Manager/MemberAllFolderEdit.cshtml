@@ -1,0 +1,196 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _dbContext
+
+@model prjTravel.Models.Folder
+
+@{
+    ViewData["Title"] = "編輯資料";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    var classify = _dbContext.Classifies.Where(m => m.Cstatus == 1).OrderBy(m => m.Cid).ToList();
+}
+
+<h4 class="fw-bold">編輯資料</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="MemberAllFolderEdit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FfolderId" />
+            <div class="form-group">
+                <label asp-for="Fcid" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <select id="Fcid" asp-for="Fcid" class="form-select">
+                    @foreach (var item in classify)
+                    {
+                        <option value="@item.Cid">@item.Cname</option>
+                    }
+                </select>
+                @*                 <input asp-for="Fcid" class="form-control" />
+                <span asp-validation-for="Fcid" class="text-danger"></span> *@
+            </div>
+            <div class="form-group">
+                <label asp-for="Ftitle" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <input id="Ftitle" asp-for="Ftitle" class="form-control" />
+                <span asp-validation-for="Ftitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fdescription" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <textarea id="Fdescription" asp-for="Fdescription" class="form-control"></textarea>
+                <span asp-validation-for="Fdescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fpicture" class="control-label">圖檔(最多只能上傳三張圖)</label>
+                <input accept="image/*" id="Fpicture" type="file" name="TitleFormfiles" class="form-control" onchange="checkfile(this)" multiple />
+                @* 由_PictureModal統一管理Modal *@
+                <span asp-validation-for="Fpicture" class="text-danger"></span>
+            </div>
+            @*             <div class="form-group">
+            <label asp-for="Fpicture" class="control-label"></label>
+            <input asp-for="Fpicture" class="form-control" />
+            <span asp-validation-for="Fpicture" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+            <label asp-for="FcreateUser" class="control-label"></label>
+            <input asp-for="FcreateUser" class="form-control" />
+            <span asp-validation-for="FcreateUser" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+            <label asp-for="FcreateTime" class="control-label"></label>
+            <input asp-for="FcreateTime" class="form-control" />
+            <span asp-validation-for="FcreateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+            <label asp-for="FeditUser" class="control-label"></label>
+            <input asp-for="FeditUser" class="form-control" />
+            <span asp-validation-for="FeditUser" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+            <label asp-for="FeditTime" class="control-label"></label>
+            <input asp-for="FeditTime" class="form-control" />
+            <span asp-validation-for="FeditTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+            <label asp-for="Fstatus" class="control-label"></label>
+            <input asp-for="Fstatus" class="form-control" />
+            <span asp-validation-for="Fstatus" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <input id="UpLoadButton" type="submit" value="儲存" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var Fcid = document.getElementById('Fcid');                 //類別名稱
+    var Ftitle = document.getElementById('Ftitle');             //主題名稱
+    var Fdescription = document.getElementById('Fdescription'); //描述說明
+    var Fpicture = document.getElementById('Fpicture');         //圖檔
+    var UpLoadButton = document.getElementById('UpLoadButton'); //按鈕
+
+    /*點擊按鈕後觸發全部*/
+    if (UpLoadButton) {
+        UpLoadButton.addEventListener('click', function (event) {
+            FcidCheck();
+            FtitleCheck();
+            FdescriptionCheck();
+        });
+    }
+
+    /*偵測類別名稱是否被輸入*/
+    if (Fcid) {
+        Fcid.addEventListener('input', function () {
+            FcidCheck();
+        });
+    }
+
+    function FcidCheck() {
+        //輸入框是否存在
+        if (Fcid) {
+            if (Fcid.value.trim() !== "") {
+                //輸入框有資料
+                Fcid.classList.remove('is-invalid');
+                Fcid.classList.add('is-valid');
+            }
+            else {
+                //輸入框沒有資料
+                Fcid.classList.remove('is-valid');
+                Fcid.classList.add('is-invalid');
+            }
+        }
+    }
+
+    /*偵測主題名稱是否被輸入*/
+    if (Ftitle) {
+        Ftitle.addEventListener('input', function () {
+            FtitleCheck();
+        });
+    }
+
+    function FtitleCheck() {
+        //輸入框是否存在
+        if (Ftitle) {
+            if (Ftitle.value.trim() !== "") {
+                //輸入框有資料
+                Ftitle.classList.remove('is-invalid');
+                Ftitle.classList.add('is-valid');
+            }
+            else {
+                //輸入框沒有資料
+                Ftitle.classList.remove('is-valid');
+                Ftitle.classList.add('is-invalid');
+            }
+        }
+    }
+
+    /*偵測描述說明是否被輸入*/
+    if (Fdescription) {
+        Fdescription.addEventListener('input', function () {
+            FdescriptionCheck();
+        });
+    }
+
+    function FdescriptionCheck() {
+        //輸入框是否存在
+        if (Fdescription) {
+            if (Fdescription.value.trim() !== "") {
+                //輸入框有資料
+                Fdescription.classList.remove('is-invalid');
+                Fdescription.classList.add('is-valid');
+            }
+            else {
+                //輸入框沒有資料
+                Fdescription.classList.remove('is-valid');
+                Fdescription.classList.add('is-invalid');
+            }
+        }
+    }
+
+    /*偵測圖檔輸入框是否被輸入*/
+    if (Fpicture) {
+        Fpicture.addEventListener('change', function () {
+            FpictureCheck();
+        });
+    }
+
+
+    function FpictureCheck() {
+        if (Fpicture) {
+            if (Fpicture.files.length > 0) {
+                Fpicture.classList.add('is-valid');
+            }
+            else {
+                Fpicture.classList.remove('is-valid');
+            }
+        }
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,72 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _context
+
+@model prjTravel.Models.Folder
+
+@{
+    ViewData["Title"] = "新增資料";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    var classify = _context.Classifies.Where(m => m.Cstatus == 1).ToList();
+}
+
+<div class="container-fluid" style="margin-top: 70px;">
+<h4 class="mt-3 fw-bold">新增資料</h4>
+<hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="FolderUpload" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="FfolderId" class="control-label"></label>
+                    <span class="text-danger">*</span>
+                    <input id="FfolderId" asp-for="FfolderId" class="form-control" required/>
+                    <span asp-validation-for="FfolderId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Fcid" class="control-label"></label>
+                    <span class="text-danger">*</span>
+                    <select id="Fcid" asp-for="Fcid" class="form-select" required>
+                        @foreach (var item in classify)
+                        {
+                            <option value="@item.Cid">@item.Cname</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Fcid" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Ftitle" class="control-label"></label>
+                    <span class="text-danger">*</span>
+                    <input id="Ftitle" asp-for="Ftitle" class="form-control" required/>
+                    <span asp-validation-for="Ftitle" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Fdescription" class="control-label"></label>
+                    <span class="text-danger">*</span>
+                    <textarea id="Fdescription" asp-for="Fdescription" class="form-control" required></textarea>
+                    <span asp-validation-for="Fdescription" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Fpicture" class="control-label">圖檔(最多只能上傳三張圖)</label>
+                    <span class="text-danger">*</span>
+                    <input id="Pictures" accept="image/*" type="file" name="TitleFormfiles" class="form-control" onchange="checkfile(this)" multiple required/>
+                    @* 由_PictureModal統一管理Modal *@
+                    <span asp-validation-for="Fpicture" class="text-danger"></span>
+                    <div class="invalid-feedback text-danger">
+                        圖片欄位不得為空
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group">
+                        <input id="UpLoadButton" type="submit" value="儲存" class="btn btn-primary" />
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

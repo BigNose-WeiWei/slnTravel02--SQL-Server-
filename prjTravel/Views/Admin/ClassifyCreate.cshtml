@@ -1,0 +1,29 @@
+﻿@model prjTravel.Models.Classify
+
+@{
+    ViewData["Title"] = "新增選項分類";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h4 class="fw-bold">新增選項分類</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ClassifyCreate" class="needs-validation" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Cname" class="control-label"></label>
+                <span class="text-danger">*</span>
+                <input asp-for="Cname" class="form-control" required/>
+                <span asp-validation-for="Cname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="新增" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

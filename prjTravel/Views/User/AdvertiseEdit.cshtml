@@ -1,0 +1,192 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _Dbcontext
+
+@model prjTravel.Models.Advertise
+
+@{
+    ViewData["Title"] = "編輯廣告內容";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    var Folder = _Dbcontext.Folders.FirstOrDefault(m => m.FfolderId == Model.AfolderId)?.Ftitle ?? string.Empty;
+}
+
+<h4 class="fw-bold">編輯廣告內容</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        @* novalidate *@
+        <form asp-action="AdvertiseEdit" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="AfolderId" class="control-label">客戶編號</label>
+                <input asp-for="Aid" type="hidden">
+                <input asp-for="Acid" type="hidden">
+                <input class="form-control" list="InputItem" asp-for="AfolderId" disabled>
+                @*<datalist id="InputItem" readonly unselectable="on">
+                    @foreach (var FolderItem in Folder)
+                    {
+                        <option value="@FolderItem.FfolderId">@FolderItem.Ftitle</option>
+                    }
+                </datalist> *@
+                <span asp-validation-for="AfolderId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">客戶名稱</label>
+                <input class="form-control" id="AfolderId" value="@Folder" disabled>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Apictures" class="control-label">小圖</label>
+                <input accept="image/*" type="file" id="AdFormfilesSm" name="AdFormfilesSm" class="form-control" onchange="checkfile(this)"/>
+                @* 由_PictureModal統一管理Modal *@
+                <span asp-validation-for="Apictures" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Apictures" class="control-label">大圖</label>
+                <input accept="image/*" type="file" id="AdFormfilesMb" name="AdFormfilesMb" class="form-control" onchange="checkfile(this)"/>
+                @* 由_PictureModal統一管理Modal *@
+                <span asp-validation-for="Apictures" class="text-danger"></span>
+            </div>
+            @*             <div class="form-group">
+            <label asp-for="Astatus" class="control-label"></label>
+            <input asp-for="Astatus" class="form-control" />
+            <span asp-validation-for="Astatus" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="Arow" class="control-label">廣告順序</label>
+                <input id="ArowInput" asp-for="Arow" class="form-control" placeholder="請輸入數值" autocomplete="off"
+                       onkeydown="javascript: return ['Backspace','Delete','ArrowLeft','ArrowRight'].includes(event.code) ? true : !isNaN(Number(event.key)) && event.code!=='Space'" />
+                <span id="ArowValidationMessage" asp-validation-for="Arow" class="text-danger"></span>
+                <div id="customInvalidFeedback" class="invalid-feedback"></div>
+            </div>
+            <div class="form-group">
+                <input id="UpLoadButton" type="submit" value="儲存" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    var FolderId = document.getElementById('AfolderId');            //選擇對應客戶
+    var PictureMbInput = document.getElementById('AdFormfilesMb');  //大圖
+    var PictureSmInput = document.getElementById('AdFormfilesSm');  //小圖
+    var arowInput = document.getElementById('ArowInput');           //圖片順序輸入框
+    var uploadButton = document.getElementById('UpLoadButton');     //上傳、確認按鈕
+
+    /*點擊按鈕後執行*/
+    if (uploadButton) {
+        uploadButton.addEventListener('click', function (event) {
+            //InputPicturesAfolderIdCheck();  //檢查對應客戶 (基本上他不應該會有任何錯誤)
+            //MbPitcuteCheck();               //檢查大圖是否都有上傳了
+            //SmPitcuteCheck();               //檢查小圖是否都有上傳了
+            InputPicturesRawCheck();        //檢查圖片順序
+        });
+    }
+
+    /*偵測大圖輸入框是否被輸入*/
+    if (PictureMbInput) {
+        PictureMbInput.addEventListener('change', function () {
+            MbPitcuteCheck();
+        });
+    }
+
+    /*偵測小圖輸入框是否被輸入*/
+    if (PictureSmInput) {
+        PictureSmInput.addEventListener('change', function () {
+            SmPitcuteCheck();
+        });
+    }
+
+    function MbPitcuteCheck() {
+        // 大圖輸入框是否存在
+        if (PictureMbInput) {
+            if (PictureMbInput.files.length > 0) {
+                // 輸入框有選擇檔案
+                //console.log('大圖有選擇檔案');
+                //PictureMbInput.classList.remove('is-invalid');
+                PictureMbInput.classList.add('is-valid');
+            } else {
+                // 輸入框沒有選擇檔案
+                //console.log('大圖沒有選擇檔案');
+                PictureMbInput.classList.remove('is-valid');
+                //PictureMbInput.classList.add('is-invalid');
+            }
+        }
+    }
+
+    function SmPitcuteCheck() {
+        // 小圖輸入框是否存在
+        if (PictureSmInput) {
+            if (PictureSmInput.files.length > 0) {
+                // 輸入框有選擇檔案
+                //console.log('小圖有選擇檔案');
+                //PictureSmInput.classList.remove('is-invalid');
+                PictureSmInput.classList.add('is-valid');
+            } else {
+                // 輸入框沒有選擇檔案
+                //console.log('小圖沒有選擇檔案');
+                PictureSmInput.classList.remove('is-valid');
+                //PictureSmInput.classList.add('is-invalid');
+            }
+        }
+    }
+
+    /*偵測廣告順序輸入框是否被輸入*/
+    if (arowInput) {
+        arowInput.addEventListener('input', function () {
+            //取得輸入框資料
+            var inputValue = arowInput.value;
+
+            /*因為執行順序問題強制觸發*/
+            if (inputValue >= 0 && inputValue < 100) {
+                arowInput.classList.remove("is-invalid");
+                arowInput.classList.add("is-valid");
+            }
+            else {
+                arowInput.classList.remove("is-valid");
+                arowInput.classList.add('is-invalid');
+            }
+
+            //InputPicturesRawCheck();
+            //console.log("輸入框被觸發" + inputValue.length);
+        });
+    }
+
+    //檢查圖片順序是否有錯誤 因為執行優先序問題 由監控強制觸發
+    function InputPicturesRawCheck() {
+        var validationSpan = document.querySelector('#ArowValidationMessage');
+        if (validationSpan && validationSpan.classList.contains('field-validation-error')) {
+            // 如果驗證失敗，刪除正確標籤且新增錯誤標籤
+            arowInput.classList.remove("is-valid");
+            arowInput.classList.add('is-invalid');
+            //console.log('Arow 驗證錯誤！');
+        }
+        else {
+            arowInput.classList.remove("is-invalid");
+            arowInput.classList.add("is-valid");
+            //console.log('Arow 驗證正確！');
+        }
+    }
+
+    //檢查選擇對應客戶是否有錯誤 (基本上他不應該會有任何錯誤)
+    // function InputPicturesAfolderIdCheck() {
+    //     var validationSpan = document.querySelector('#AfolderIdValidationMessage');
+    //     if (validationSpan && validationSpan.classList.contains('field-validation-error')) {
+    //         // 如果驗證失敗，刪除正確標籤且新增錯誤標籤
+    //         FolderId.classList.remove("is-valid");
+    //         FolderId.classList.add('is-invalid');
+    //         //console.log('選擇客戶 驗證錯誤！');
+    //     }
+    //     else {
+    //         FolderId.classList.remove("is-invalid");
+    //         FolderId.classList.add("is-valid");
+    //         //console.log('選擇客戶 驗證正確！');
+    //     }
+    // }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

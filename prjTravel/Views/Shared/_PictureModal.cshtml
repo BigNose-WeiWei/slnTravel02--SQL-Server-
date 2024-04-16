@@ -1,0 +1,71 @@
+﻿<!-- 用戶上傳錯的檔案格式出現 -->
+<div class="modal fade" id="PictureModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="ModalTatil"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p style="word-wrap: break-word;" id="ModalThing"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--阻止使用者上傳非照片格式的檔案,以及數量限制-->
+<script>
+
+    //取得Modal
+    var myModalElement = document.getElementById('PictureModal');
+    var modalTitle = myModalElement.querySelector('.modal-title');
+    var modalThing = myModalElement.querySelector('.modal-body');
+
+    //為了使用.Show()需要建立Modal
+    var myModal = new bootstrap.Modal(myModalElement);
+
+    //判斷副檔名是否正確
+    function checkfile(sender) 
+    {
+        // 可接受的附檔名
+        var validExts = new Array(".apng", ".bmp", ".gif", ".jpg", ".jpeg", ".pjpeg", ".png", ".svg+xml", ".tiff", ".webp", ".x-icon", ".ico", ".jfif", ".pjp");
+        var fileExt = sender.value;
+        fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+
+        if (validExts.indexOf(fileExt) < 0) {
+            modalTitle.textContent = "檔案類型錯誤";
+            modalThing.textContent = "只接受檔案格式: " + validExts;
+
+            //顯示
+            myModal.show();
+            //清空選項
+            sender.value = null;
+        }
+        else 
+        {
+            checkfileNum(sender)
+        }
+    }
+
+    //判斷上傳數量是否過大
+    function checkfileNum(sender) {
+
+        var fileLength = sender.files.length;
+        var picturesNum = 3;
+
+        if (fileLength > picturesNum) {
+
+            /*圖片數量超過三張*/
+            modalTitle.textContent = "圖片數量異常";
+            modalThing.textContent = "很抱歉，圖片上限數量為" + picturesNum + "張，" + "而目前偵測張數為" + fileLength + "張。";
+
+            //顯示
+            myModal.show();
+            //清空選項
+            sender.value = null;
+        }
+    }
+</script>

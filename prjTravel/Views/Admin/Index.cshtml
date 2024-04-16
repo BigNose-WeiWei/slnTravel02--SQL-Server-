@@ -1,0 +1,71 @@
+﻿
+@model IEnumerable<prjTravel.Models.Classify>
+
+@{
+    ViewData["Title"] = "選項分類頁面";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h4 class="fw-bold">分類頁面</h4>
+<hr/>
+
+<form asp-action="Index" method="get" class="col-12 col-sm-6 col-md-4 col-lg-4 mb-2">
+    <div class="input-group">
+        <input type="text" class="form-control" name="SearchClassify" placeholder="請輸入類別名稱">
+        <span class="input-group-btn">
+            <button type="submit" class="btn btn-secondary">查詢</button>
+        </span>
+    </div>
+</form>
+
+<div class="table-responsive table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl table-responsive-xxl">
+    <table class="table table-hover  table-condensed">
+        <thead>
+            <tr>
+                <th class="col-2">
+                    @Html.DisplayNameFor(model => model.Cname)
+                </th>
+                <th class="col-1"></th>
+                <th class="col-1"></th>
+                <th class="col-1"></th>
+                <th class="col-1"></th>
+                <th class="col-auto"></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                 <td class="text-nowrap">
+                    @Html.DisplayFor(modelItem => item.Cname)
+                </td>
+                <td>
+                    @{
+                        if (item.Cstatus == 1)
+                        {
+                                <a asp-action="ClassifyStatus" asp-route-Cid="@item.Cid" class="btn btn-success" style="width:100px">顯示</a>
+                        }
+                        else if (item.Cstatus == 0)
+                        {
+                                <a asp-action="ClassifyStatus" asp-route-Cid="@item.Cid" class="btn btn-dark" style="width:100px">隱藏</a>
+                        }
+                    }
+                </td>
+                <td>
+                        <a asp-action="ClassifyEdit" asp-route-Cid="@item.Cid" class="btn btn-warning" style="width:100px">修改名稱</a>
+                </td>
+                <td>
+                        <a asp-action="FolderClassify" asp-route-Cid="@item.Cid" class="btn btn-primary" style="width:100px">預覽明細</a>
+                </td>
+                <td>
+                        <button type="button" class="btn btn-danger" style="width:100px;" data-bs-toggle="modal" data-bs-target="#DeleteConfirmModal"
+                                data-bs-Controller="AdminController" data-bs-Action="ClassifyDelete" data-bs-ActionID="Cid"
+                                data-bs-Key="@item.Cid" data-bs-Title="確定要刪除這個分類嗎?" data-bs-Thing="刪除後將無法復原!">
+                                刪除
+                        </button>
+                        @* 一律用_DeleteConfirmModal顯示方便管理 *@
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>

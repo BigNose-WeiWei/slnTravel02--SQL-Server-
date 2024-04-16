@@ -1,0 +1,93 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _dbContext
+
+@model List<prjTravel.Models.FolderPicture>
+
+@{
+    ViewData["Title"] = "PictureRow";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    string Pfid = ViewBag.PictureFid;
+    var PictureRow = _dbContext.FolderPictures.Where(m => m.Pfid == Pfid).ToList();
+    var FirstItem = Model[0];
+}
+
+<h4>@ViewBag.FoldTitle - 圖片順序設定</h4>
+<hr />
+
+<form asp-action="PictureRow">
+    <table class="table table-hover table-sm text-center">
+        <thead>
+            <tr>
+                <th>
+                    <label asp-for="@FirstItem.Ppicture" class="control-label"></label>
+                </th>
+                <th>
+                    <label asp-for="@FirstItem.Prow" class="control-label"></label>
+                </th>
+                <th class="col-8"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.Count(); i++)
+            {
+                <tr>
+                    <td>
+                        <img src="~/pictures/@ViewBag.FoldCid/@Model[i].Ppicture" style="width:180px; height:200px" />
+                        @* @Html.DisplayFor(modelItem => item.Ppicture) *@
+                    </td>
+                    <td style="vertical-align:middle">
+                        <input type="hidden" asp-for="@Model[i].Pid" /> <!--丟給後端用-->
+                        <input type="hidden" asp-for="@Model[i].Pfid" /> <!--丟給後端用-->
+                        <select asp-for="@Model[i].Prow" class="form-select">
+                            @foreach (var picture in PictureRow)
+                            {
+                                <option value="@picture.Prow">@picture.Prow</option>
+                            }
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div>
+        <input type="submit" value="儲存" class="btn btn-success btn-lg">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var selectElements = document.querySelectorAll('.form-select');
+
+            selectElements.forEach(function (selectElement) {
+                selectElement.addEventListener('change', function () {
+                    // 使用 selectedOptions 屬性獲取當前選擇的選項
+                    var selectedOption = selectElement.selectedOptions[0];
+
+                    // 獲取選項的值
+                    var selectedValue = selectedOption.value;
+
+                    // 檢查其他的 select 元素，如果有相同的值，則更改其他元素的值
+                    Array.from(selectElements).forEach(function (otherSelect) {
+                        if (otherSelect !== selectElement) {
+                            if (otherSelect.value === selectedValue) {
+                                // 清除已選擇的選項
+                                otherSelect.value = "";
+
+                                // 自動選擇其他可用的值，排除已被選擇的值
+                                var availableOptions = Array.from(otherSelect.options)
+                                    .filter(option => option.value !== "")
+                                    .filter(option => !Array.from(selectElements).some(s => s.value === option.value));
+
+                                if (availableOptions.length > 0) {
+                                    otherSelect.value = availableOptions[0].value;
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</form>
+

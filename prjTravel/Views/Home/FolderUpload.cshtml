@@ -1,0 +1,58 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _context
+
+@model prjTravel.Models.Folder
+
+@{
+    ViewData["Title"] = "新增資料";
+    var classify = _context.Classifies.Where(m => m.Cstatus == 1).ToList();
+}
+
+<h4>新增資料</h4>
+<hr/>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="FolderUpload" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FfolderId" class="control-label"></label>
+                <input asp-for="FfolderId" class="form-control" />
+                <span asp-validation-for="FfolderId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fcid" class="control-label"></label>
+                <select asp-for="Fcid" class="form-select">
+                    @foreach(var item in classify)
+                    {
+                        <option value="@item.Cid">@item.Cname</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ftitle" class="control-label"></label>
+                <input asp-for="Ftitle" class="form-control" />
+                <span asp-validation-for="Ftitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fdescription" class="control-label"></label>
+                <textarea asp-for="Fdescription" class="form-control"></textarea>
+                <span asp-validation-for="Fdescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fpicture" class="control-label"></label>
+                <input type="file" name="formfile" class="form-control" />
+                <span asp-validation-for="Fpicture" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="儲存" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

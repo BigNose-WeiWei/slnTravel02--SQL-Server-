@@ -1,0 +1,51 @@
+﻿@model prjTravel.Models.Member
+
+@{
+    ViewData["Title"] = "會員登入";
+}
+<div class="container" style="margin-top: 70px;">
+    <h4 class="fw-bold">會員登入</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Login" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="form-label">帳號</label>
+                    <span class="text-danger">*</span>
+                    <input type="text" name="uid" class="form-control" autofocus required />
+                    <div class="invalid-feedback text-danger">
+                        帳號欄位不得為空
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="form-label">密碼</label>
+                    <span class="text-danger">*</span>
+                    <input type="password" name="pwd" class="form-control" required />
+                    <div class="invalid-feedback text-danger">
+                        密碼欄位不得為空
+                    </div>
+                </div>
+
+                @*             <div class="form-group">
+                <label asp-for="Mname" class="control-label"></label>
+                <input asp-for="Mname" class="form-control" />
+                <span asp-validation-for="Mname" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                <label asp-for="Mmail" class="control-label"></label>
+                <input asp-for="Mmail" class="form-control" />
+                <span asp-validation-for="Mmail" class="text-danger"></span>
+                </div> *@
+                <div class="form-group">
+                    <input type="submit" value="登入" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

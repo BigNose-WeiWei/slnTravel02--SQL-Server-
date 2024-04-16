@@ -1,0 +1,145 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _dbContext
+
+@model IEnumerable<prjTravel.Models.Member>
+
+@{
+    ViewData["Title"] = "會員列表";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    var roleItem = _dbContext.Roles.ToList();
+}
+
+<h4 class="fw-bold">會員列表</h4>
+<hr/>
+
+<form asp-action="MemberList" method="get" class="col-12 col-sm-12 col-md-12 col-xl-6 mb-2">
+    <div class="row g-1">
+        <div class="col-2 col-sm-2 col-md-1">
+            <nobr class="h5 fw-bold" style="display: grid; place-items: center; height: 100%;">
+                @Html.DisplayNameFor(model => model.Mrole):
+            </nobr>
+        </div>
+        <div class="col-6 col-sm-3 col-md-3">
+            <select class="form-select" name="SearchClassify">
+                <option value="">不限</option>
+                @foreach (var item in roleItem)
+                {
+                    <option value="@item.Rid">@item.Rname</option>
+                }
+            </select>
+        </div>
+        <div class="col-sm-5 col-md-5">
+            <input type="text" class="form-control" name="SearchMember" placeholder="請輸入客戶帳號">
+        </div>
+        <div class="col-sm-2 col-md-2">
+            <button type="submit" class="btn btn-secondary">查詢</button>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive table-responsive-sm table-responsive-md table-responsive-lg">
+    <table class="table table-hover table-responsive">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Muid)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Mpwd)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Mname)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Mmail)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Mrole)
+                </th>
+                <th class="col-1"></th>
+                <th class="col-1"></th>
+                <th class="col-1"></th>
+                <th class="col-1"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var roleName = roleItem.FirstOrDefault(m => m.Rid == item.Mrole);
+
+                string IsDisabled = "";
+                string IsAdDisabled = "";
+                if (item.Muid == ViewBag.Sid || item.Mrole == "Admin")
+                {
+                    IsDisabled = "disabled";
+                }
+
+                if (item.Mrole == "Admin")
+                {
+                    IsAdDisabled = "disabled";
+                }
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Muid)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Mpwd)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Mname)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Mmail)
+                    </td>
+                    <td class="text-nowrap">
+                        @(roleName != null ? roleName.Rname : "N/A")
+
+                        @* @Html.DisplayFor(modelItem => item.Mrole) *@
+
+                        <!--這邊失敗了... 要使用javascript-->
+                        @*  <form asp-action="MemberList" id="MemberStatus">
+                            <select asp-for="@item.Mrole" class="form-select" onclick=submitForm()>
+                            @foreach (var role in roleItem)
+                            {
+                            <option value="@role.Rid">@role.Rname</option>
+                            }
+                            </select>
+                            </form> 
+                        *@
+                    </td>
+
+@*                     <label>@userSid</label> *@
+
+                    <td>
+                        @{
+                            if (item.Mstatus == 1)
+                            {
+                                <a asp-action="MemberStatus" asp-route-Uid="@item.Muid" class="btn btn-success @IsDisabled @IsAdDisabled" style="width:100px">啟用</a>
+                            }
+                            else if (item.Mstatus == 0)
+                            {
+                                <a asp-action="MemberStatus" asp-route-Uid="@item.Muid" class="btn btn-dark @IsDisabled @IsAdDisabled" style="width:100px">停用</a>
+                            }
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="MemberEdit" asp-route-Uid="@item.Muid" class="btn btn-warning @IsAdDisabled" style="width:100px">編輯</a>
+                    </td>
+                    <td>
+                        <a asp-action="MemberAllFold" asp-route-Uid="@item.Muid" class="btn btn-primary" style="width:100px">成員文章</a>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger @IsDisabled @IsAdDisabled" style="width:100px;" data-bs-toggle="modal" data-bs-target="#DeleteConfirmModal"
+                                data-bs-Controller="ManagerController" data-bs-Action="MemberDelete" data-bs-ActionID="Uid"
+                                data-bs-Key="@item.Muid" data-bs-Title="確定要刪除這位成員嗎?" data-bs-Thing="刪除後將無法復原!">
+                            刪除
+                        </button>
+                        @* 一律用_DeleteConfirmModal顯示方便管理 *@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

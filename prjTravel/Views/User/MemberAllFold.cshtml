@@ -1,0 +1,180 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _dbcontext
+
+@model IEnumerable<prjTravel.Models.Folder>
+
+@{
+    ViewData["Title"] = "成員資料";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    var picturesDbcontext = _dbcontext.FolderPictures.ToList();}
+
+<div class="container-fluid" style="margin-top: 70px;">
+    <h4 class="mt-3 fw-bold">@ViewData["Name"] - 相關資料</h4>
+    <hr />
+
+    <form asp-action="MemberAllFold" method="get" class="col-12 col-sm-6 col-md-4 col-lg-4 mb-2">
+        <div class="input-group">
+            <input type="text" class="form-control visually-hidden" name="Uid" value="@ViewData["MUid"]" />
+            <input type="text" class="form-control" name="SearchFolder" placeholder="請輸入主題名稱">
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-secondary">查詢</button>
+            </span>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="text-nowrap">
+                        @Html.DisplayNameFor(model => model.Ftitle)
+                    </th>
+                    @*                 <th class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.Fdescription)
+                    </th> *@
+                    <th class="text-nowrap">
+                        @Html.DisplayNameFor(model => model.FcreateUser)
+                    </th>
+                    <th class="text-nowrap">
+                        @Html.DisplayNameFor(model => model.FcreateTime)
+                    </th>
+                    <th class="text-nowrap">
+                        @Html.DisplayNameFor(model => model.FeditUser)
+                    </th>
+                    <th class="text-nowrap">
+                        @Html.DisplayNameFor(model => model.FeditTime)
+                    </th>
+                    <th class="text-nowrap">
+                        @Html.DisplayNameFor(model => model.Fpicture)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int index = 0;              //第幾筆資料
+                    int pictureTitleNum = 0;    //標籤連結導引用
+                    int pictureNum = 0;         //幻燈片用
+                }
+                @foreach (var item in Model)
+                {
+                    index++;
+                    var picturesItem = picturesDbcontext.Where(m => m.Pfid == item.Fpicture && m.PcontentClassify == "Title").OrderBy(m => m.Prow);  //取得圖片路徑
+
+
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Ftitle)
+                        </td>
+                        @*                     <td>
+                    @Html.DisplayFor(modelItem => item.Fdescription)
+                    </td> *@
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FcreateUser)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FcreateTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FeditUser)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FeditTime)
+                        </td>
+                        <td style="width:180px; height:200px">
+                            <!--圖片輪播-->
+                            <div id="carousellnk_@index" class="carousel slide" data-bs-ride="carousel">
+
+                                <!--連結導引-->
+                                <div class="carousel-indicators">
+                                    @foreach (var pictures in picturesItem)
+                                    {
+                                        pictureTitleNum = pictureNum + 1;
+                                        if (pictureNum == 0)
+                                        {
+                                            <button type="button" data-bs-target="#carousellnk_@index" data-bs-slide-to="@pictureNum" class="active" aria-current="true" aria-label="Slide @pictureTitleNum"></button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" data-bs-target="#carousellnk_@index" data-bs-slide-to="@pictureNum" aria-label="Slide @pictureTitleNum"></button>
+                                        }
+                                        pictureNum++;
+                                    }
+                                    @{
+                                        pictureNum = 0; //重製單筆資料預設值
+                                    }
+                                </div>
+
+                                <!--幻燈片圖-->
+                                <div class="carousel-inner">
+                                    @foreach (var pictures in picturesItem)
+                                    {
+                                        if (pictureNum == 0)
+                                        {
+                                            <div class="carousel-item active" data-bs-interval="3000">
+                                                <img src="~/pictures/@item.Fcid/@pictures.Ppicture" style="width:180px; height:200px">
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="carousel-item" data-bs-interval="3000">
+                                                <img src="~/pictures/@item.Fcid/@pictures.Ppicture" style="width:180px; height:200px">
+                                            </div>
+                                        }
+
+                                        pictureNum++;
+                                    }
+
+                                    @{
+                                        pictureNum = 0; //重製單筆資料預設值
+                                    }
+                                </div>
+
+                                <!--上下導引-->
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carousellnk_@index" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carousellnk_@index" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+
+                            </div>
+                            @* @Html.DisplayFor(modelItem => item.Fpicture) *@
+                        </td>
+                        <td>
+                            <div class="mb-2">
+                                @{
+                                    if (item.Fstatus == 1)
+                                    {
+                                        <a asp-action="MemberAllFolderStatus" asp-route-Fid="@item.FfolderId" class="btn btn-success btn-block" style="width:110px">顯示</a>
+                                    }
+                                    else if (item.Fstatus == 0)
+                                    {
+                                        <a asp-action="MemberAllFolderStatus" asp-route-Fid="@item.FfolderId" class="btn btn-dark btn-block" style="width:110px">隱藏</a>
+                                    }
+                                }
+                            </div>
+                            <div class="mb-2">
+                                <a asp-action="MemberAllFolderEdit" asp-route-Fid="@item.FfolderId" class="btn btn-warning btn-block" style="width:110px">編輯內容</a>
+                            </div>
+                            <div class="mb-2">
+                                <a asp-action="MemberAllPictureRow" asp-route-Fpicture="@item.Fpicture" class="btn btn-primary btn-block" style="width:110px">跑馬燈順序</a>
+                            </div>
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-danger" style="width:110px;" data-bs-toggle="modal" data-bs-target="#DeleteConfirmModal"
+                                        data-bs-Controller="ManagerController" data-bs-Action="MemberAllFolderDelete" data-bs-ActionID="Fid"
+                                        data-bs-Key="@item.FfolderId" data-bs-Title="確定要刪除這則資料嗎?" data-bs-Thing="刪除後將無法復原!">
+                                    刪除
+                                </button>
+                                @* 一律用_DeleteConfirmModal顯示方便管理 *@
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

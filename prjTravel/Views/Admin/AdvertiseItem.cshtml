@@ -1,0 +1,120 @@
+﻿@using prjTravel.Models
+
+@inject TravelDbContext _dbcontent
+
+@model IEnumerable<prjTravel.Models.Advertise>
+
+@{
+    ViewData["Title"] = "廣告列表";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var pictureDBcontent = _dbcontent.FolderPictures;
+    var FoldDbcontent = _dbcontent.Folders;
+}
+
+<h4 class="fw-bold">廣告列表</h4>
+<hr/>
+
+<form asp-action="AdvertiseItem" method="get" class="col-12 col-sm-12 col-md-12 col-xl-6 mb-2">
+    <div class="row g-1">
+        <div class="col-2 col-sm-2 col-md-1">
+            <nobr class="h5 fw-bold" style="display: grid; place-items: center; height: 100%;">
+                @Html.DisplayNameFor(model => model.Astatus):
+            </nobr>
+        </div>
+        <div class="col-4 col-sm-2 col-md-2">
+            <select class="form-select" name="SearchStatus">
+                <option value="">不限</option>
+                <option value="1">啟用</option>
+                <option value="0">停用</option>
+            </select>
+        </div>
+        <div class="col-sm-5 col-md-5">
+            <input type="text" class="form-control" name="SearchFolder" placeholder="請輸入客戶編號，或是客戶名稱">
+        </div>
+        <div class="col-sm-2 col-md-2">
+            <button type="submit" class="btn btn-secondary">查詢</button>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.AfolderId)
+                </th>
+                <th class="text-nowrap">
+                    客戶名稱
+                </th>
+                <th class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.Apictures)
+                </th>
+    @*             <th>
+                    @Html.DisplayNameFor(model => model.Astatus)
+                </th> *@
+                <th class="text-nowrap">
+                    @Html.DisplayNameFor(model => model.Arow)
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+             string pictureTitle = FoldDbcontent
+                    .FirstOrDefault(m => m.FfolderId == item.AfolderId)?
+                    .Ftitle ?? "";
+
+            string pictureItem = pictureDBcontent
+                    .FirstOrDefault(m => m.Pfid == item.Apictures && m.PcontentClassify == "Advertise" && m.Ppicture!.Contains("_mb"))?
+                    .Ppicture ?? string.Empty;
+            
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AfolderId)
+                </td>
+                <td>
+                    @pictureTitle
+                </td>
+                <td>
+    @*                 @Html.DisplayFor(modelItem => item.Apictures) *@
+                    <img src="~/pictures/advertisePictures/@pictureItem" style="width:180px; height:200px">
+                </td>
+    @*             <td>
+                    @Html.DisplayFor(modelItem => item.Astatus)
+                </td> *@
+                <td>
+                    @Html.DisplayFor(modelItem => item.Arow)
+                </td>
+                    <td>
+                        <div class="mb-2">
+                            @{
+                                if (item.Astatus == 1)
+                                {
+                                        <a asp-action="AdvertiseStatus" asp-route-Aid="@item.Aid" class="btn btn-success btn-block" style="width:110px">顯示</a>
+                                }
+                                else if (item.Astatus == 0)
+                                {
+                                        <a asp-action="AdvertiseStatus" asp-route-Aid="@item.Aid" class="btn btn-dark btn-block" style="width:110px">隱藏</a>
+                                }
+                            }
+                        </div>
+                        <div class="mb-2">
+                            <a asp-action="AdvertiseEdit" asp-route-Aid="@item.Aid" class="btn btn-warning btn-block" style="width:110px">變更資料</a>
+                        </div>
+                        <div class="mb-2">
+                            <button type="button" class="btn btn-danger" style="width:110px;" data-bs-toggle="modal" data-bs-target="#DeleteConfirmModal"
+                                    data-bs-Controller="AdminController" data-bs-Action="AdvertiseDelete" data-bs-ActionID="Aid"
+                                    data-bs-Key="@item.Aid" data-bs-Title="確定要刪除這則廣告嗎?" data-bs-Thing="刪除後將無法復原!">
+                                刪除
+                            </button>
+                            @* 一律用_DeleteConfirmModal顯示方便管理 *@
+                        </div>
+                    </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>
