@@ -1,5 +1,6 @@
 使用SQL Server作為資料庫  
-Program.cs與appsettings.json的寫法跟SQL Express不太一樣，因為要使用IIS，所以不可以用Windows認證，要用SQL Server驗證方式。
+Program.cs與appsettings.json的寫法跟SQL Express不太一樣，因為要使用IIS，所以不可以用Windows認證，要用SQL Server驗證方式。  
+資料表格式可以從SQL Express那份的App_Data取得
 
 # 網頁功能介紹
 https://drive.google.com/file/d/10PK5DchI5r23K-sk3c1Nq2Hs9Ewvnpig/view?usp=drive_link  
